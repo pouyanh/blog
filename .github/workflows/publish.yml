@@ -1,0 +1,8 @@
+name: Publish
+run-name: Publish ${{github.ref}}
+
+on: workflow_dispatch
+
+env:
+
+jobs:
