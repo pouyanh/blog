@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//go:generate go run gen.go
+//go:generate go run publish.go
 
 const (
 	dirnameOut    = "public"
