@@ -38,5 +38,5 @@ in order to finish the 1st task.
 ## An example
 
 ## Alternative names
-* Mutual Trust
-* Knowledge Mesh
+* Mutual Trust: I trust you, You trust me.
+* Knowledge Mesh: Workflow knowledge is decentralized. It is distributed among all workers.
