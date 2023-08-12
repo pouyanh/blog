@@ -24,6 +24,13 @@ this was the partial response from last **worker** which means all workers have 
 prepare the final response by combining partial responses from all **worker**s. Regardless of combining logic,
 final response is ready to be sent.
 
+## Implement using Messaging & Redis List
+This patterns let us handle synchronous communication (frontend-backend) by variable number of
+asynchronous communications (service-service) which may differ due to the request payload.
+In the diagram below communication between internal services are event-driven.
+Any async messaging platform can play role of the Message BUS.
+[![](https://mermaid.ink/img/pako:eNq1VMGK2zAQ_ZVBh9LS5GCbvfgQyGZp2FJDsOjNF1meJGJtyZXklLDsv3dkJ9nEm92UQi_CmvckvXlj3jOTpkKWMoe_OtQSH5TYWNEUGkB03uiuKdEWut9LbywsQDhY1Aq1D8VWWK-kaoX2MF8GbL56hKXw-Fvsx4Q84DlWyo2RLCAZOic2CPc_-RjnUSBwtDslEaI3cHwOx2_g5BxOhnYsSg92U36O7-4mcFy-BGgxnc2-zpcp3NdGPim9IdFkj-s7ni8JzVJYdWWt3Pao-uSR2lHzkIVdNiUqj1LgXemkVSVWFyQevbLi91nxKysZsyo8fzJUeETEPIVH7dGSZqzgE4klpd6A3yL8UEMjp4N5fyz-q2MnKjnwTWkygIjfTTnSMmgeuzGbBVNzbOs9rRLV7loTB4tJy8q0DtbWNGMB0SDgQblWeLlFBwJcV3rhnt6bwg3nzv0-_CA8-Tcjk9vuJNfdCb_KbXeOA77mzgU7v3TrI0HR_xrXNUE9f7qggaCu6GbXGu0wILRnE9agbYSqKJWeQ7FgdF2DBUvpc23CKApW6Bdihojiey1Z6m2HE9a1Fb1zyDCWrkXtqEqBQ8mVDUHX593LH6K5okU?type=png)](https://mermaid.live/edit#pako:eNq1VMGK2zAQ_ZVBh9LS5GCbvfgQyGZp2FJDsOjNF1meJGJtyZXklLDsv3dkJ9nEm92UQi_CmvckvXlj3jOTpkKWMoe_OtQSH5TYWNEUGkB03uiuKdEWut9LbywsQDhY1Aq1D8VWWK-kaoX2MF8GbL56hKXw-Fvsx4Q84DlWyo2RLCAZOic2CPc_-RjnUSBwtDslEaI3cHwOx2_g5BxOhnYsSg92U36O7-4mcFy-BGgxnc2-zpcp3NdGPim9IdFkj-s7ni8JzVJYdWWt3Pao-uSR2lHzkIVdNiUqj1LgXemkVSVWFyQevbLi91nxKysZsyo8fzJUeETEPIVH7dGSZqzgE4klpd6A3yL8UEMjp4N5fyz-q2MnKjnwTWkygIjfTTnSMmgeuzGbBVNzbOs9rRLV7loTB4tJy8q0DtbWNGMB0SDgQblWeLlFBwJcV3rhnt6bwg3nzv0-_CA8-Tcjk9vuJNfdCb_KbXeOA77mzgU7v3TrI0HR_xrXNUE9f7qggaCu6GbXGu0wILRnE9agbYSqKJWeQ7FgdF2DBUvpc23CKApW6Bdihojiey1Z6m2HE9a1Fb1zyDCWrkXtqEqBQ8mVDUHX593LH6K5okU)
+
 ## Prevent waiting forever
 Check length of the shared array {TaskName}-{RequestID} a bit (500ms~1s) after task got dispatched. If it's greater than
 zero it means there are at least one worker which is working on the task and **task dispatcher** has to wait for it.
