@@ -25,7 +25,7 @@ prepare the final response by combining partial responses from all **worker**s. 
 final response is ready to be sent.
 
 ## Implement using Messaging & Redis List
-This patterns let us handle synchronous communication (frontend-backend) by variable number of
+This pattern lets us handle synchronous communication (frontend-backend) by variable number of
 asynchronous communications (service-service) which may differ due to the request payload. In the diagram below
 communication between internal services are event-driven. Any async messaging platform can play role of the
 _Message BUS_.
@@ -46,6 +46,7 @@ all possible workers (here **Service 3**) have been done their job on the subtas
 **Service 2** finishes its own job it publishes a **Foo.Finished** event and **API Gateway** receives it. It pops from
 the list related to **ReqID=2** and as it gets empty it means all workers are done, and it's time to make the final
 response ready and send it back to the **Client**.
+
 [![](https://mermaid.ink/img/pako:eNq9VU2L2zAQ_SuDDyWhScE2ezFsIB9smlJDsLs3X2R5koiNJVeSU8Ky_72jfHodh3Z76MXIevNGb-YN0qvHVYFe5Bn8WaPkOBNsrVmZSQBWWyXrMkedycM_t0rDFJiB6VagtG6zYtoKLiomLYznDhsvFzBnFn-xfTsgcXiChTBtJHZIjMawNcLkOW3jqe8CUtQ7wRH8GzhowsENHDbh8FiORm5Br_Ne8PAwgPOn76DpcDT6PJ5HMNkq_iLkmkRTe4yF3nnxpNQhdDyn2DiCZZ1vhdlcauj9UJXgjxT25SurKpRYuCSL2aPfv7RT7KhPELu_eEh5Uj-CtM4N1yKneKugyX9HSv0rK_h7VnBlhX9iFdiU6HZSn4hJBAtpUVMXiPeJKqeyiW43CN_FqUenOhtHJ4cEwQcTXEjU4ichqcNE-abyZn8v-81zG-KPRbfbPRo5gxOstnv6chQ7ytC7kyK-WE3il6oysNKqvK_YPyqeCVMxyzdogIGpc8vMy1n5hOn2ZAT9e3Nx41WT3aX1Wvxp2tPwA50PuqwL77vg1LRcCG5cCLtdcDPf7ULQ6cJ5Bu-7cMNL3rvyz3Pk_8856qrgwBxOaRhQOpmmUtKgY51W51uJYG_glahLJgq63V_dZubROSVmXkTLlXJTkHmZfKNId9Wne8m9yOoaB15dFXTs6S3wohXbGtqli5tegPj4YBzejbff50gIfA?type=png)](https://mermaid.live/edit#pako:eNq9VU2L2zAQ_SuDDyWhScE2ezFsIB9smlJDsLs3X2R5koiNJVeSU8Ky_72jfHodh3Z76MXIevNGb-YN0qvHVYFe5Bn8WaPkOBNsrVmZSQBWWyXrMkedycM_t0rDFJiB6VagtG6zYtoKLiomLYznDhsvFzBnFn-xfTsgcXiChTBtJHZIjMawNcLkOW3jqe8CUtQ7wRH8GzhowsENHDbh8FiORm5Br_Ne8PAwgPOn76DpcDT6PJ5HMNkq_iLkmkRTe4yF3nnxpNQhdDyn2DiCZZ1vhdlcauj9UJXgjxT25SurKpRYuCSL2aPfv7RT7KhPELu_eEh5Uj-CtM4N1yKneKugyX9HSv0rK_h7VnBlhX9iFdiU6HZSn4hJBAtpUVMXiPeJKqeyiW43CN_FqUenOhtHJ4cEwQcTXEjU4ichqcNE-abyZn8v-81zG-KPRbfbPRo5gxOstnv6chQ7ytC7kyK-WE3il6oysNKqvK_YPyqeCVMxyzdogIGpc8vMy1n5hOn2ZAT9e3Nx41WT3aX1Wvxp2tPwA50PuqwL77vg1LRcCG5cCLtdcDPf7ULQ6cJ5Bu-7cMNL3rvyz3Pk_8856qrgwBxOaRhQOpmmUtKgY51W51uJYG_glahLJgq63V_dZubROSVmXkTLlXJTkHmZfKNId9Wne8m9yOoaB15dFXTs6S3wohXbGtqli5tegPj4YBzejbff50gIfA)
 
 ## Join partial responses
