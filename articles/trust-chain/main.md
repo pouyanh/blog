@@ -1,28 +1,51 @@
-# Trust Chain
-This is a Service Composition pattern in which services aren't aware of each-other when communicating. They dispatch
-tasks by broadcasting the request, other service(s) receive it and if the task is interesting they declare themselves as
-being in-charge immediately. In fact task owner knows how many responses it has to collect before sending the final
-response.
+# Anocast
+This is a Communication pattern in which nodes aren't aware of each-other when communicating. They broadcast messages,
+other node(s) receive it and in case of interest they declare themselves as being in-charge immediately.
+In fact message publisher knows how many replies it has to collect in order to conclude.
 
-## How to achieve it
-Suppose having a **task dispatcher** which broadcasts the task without having information about which unit(s)
-are going to work on the task and some **worker**s which may work on some tasks. Task dispatch and gathering
-the result(s) is asynchronous. **task dispatcher** and **worker**s share an array per each task accessible by
-{TaskName}-{RequestID}. TaskName is equivalent to message topic in messaging systems and
-RequestID is a uniquely generated id by **task dispatcher**.
+## Realization
+Suppose having a task dispatcher which broadcasts the task without having information about which unit(s)
+are going to work on the task and some workers which may work on some tasks. Task dispatch and gathering
+the result(s) is asynchronous. task dispatcher and workers share an array per each task accessible by
+{TaskName}-{RequestID}. TaskName is equivalent to message topic in messaging systems and RequestID is a uniquely
+generated id by task dispatcher.
 
-Whenever **worker**s receive a task, in case they realized that the task is interesting for them which means
-they want to process it, they _push_ to the shared array {TaskName}-{RequestID}. Value doesn't matter.
+Whenever workers receive a task, in case they realized that the task is interesting for them which means
+they want to process it, they **push** to the shared array {TaskName}-{RequestID}. Value doesn't matter.
 
-When each **worker** finishes working on the task it publishes its individual result so that the **task dispatcher**
-receives it as one partial response while there may be other possible responses too.
-In this step the **task dispatcher** *pop*s from the shared array {TaskName}-{RequestID}. If there were still remaining
-items on the shared array it means there are **worker**s which are still working on the task
-in fact the **task dispatcher** don't return the final response and just keeps this partial response somewhere to join
-with other partial responses later. If there were no items left on the shared array it means
-this was the partial response from last **worker** which means all workers have finished their jobs, and it's time to
-prepare the final response by combining partial responses from all **worker**s. Regardless of combining logic,
-final response is ready to be sent.
+When each worker finishes working on the task it publishes its individual result so that the task dispatcher
+receives it as one partial response while there may be other possible responses too. In this step the task dispatcher
+*pop*s from the shared array {TaskName}-{RequestID}. If there were still remaining items on the shared array it means
+there are workers which are still working on the task in fact the task dispatcher don't return the final response and
+just keeps this partial response somewhere to join with other partial responses later. If there were no items left on
+the shared array it means this was the partial response from last worker which means all workers have finished their
+jobs, and it's time to prepare the final response by combining partial responses from all workers.
+Regardless of combining logic, final response is ready to be sent.
+
+## Boring Message
+If no node is interested in the message, the message publisher waits forever to collect at least one reply which is
+pointless. To handle this situation there should be an early-timeout mechanism. One solution is to check length of the
+shared array {TaskName}-{RequestID} a bit (500ms~1s) after message published. If it's greater than zero it means there
+are at least one node which is processing the message and message publisher has to wait for reply. If it's zero it
+means no one interested in the message and the message publisher has to go on.
+
+## Multi-staged Messaging
+Some node may need to communicate with other nodes in order to reply to the received message. Don't forget that each
+**node** can be a **message publisher** too. As this pattern is based on asynchronous communication nodes are free to
+publish secondary messages and wait for replies confident about primary message publisher waits for it.
+
+## Fraud Prevention
+All nodes should have unique signatures and at least replies should be signed. Collector have to check if all replies to
+a unique message have distinct signatures. This puts limitation on number of replies each individual node can send to a
+single message. It's supposed that nodes process each message at most once.
+
+## Compensation
+Message possibly have side effects which may be desired to be withdrawn in case one node reported a problem. It can
+become handled by different techniques including rollback and commit on success. One solution is to keep side effects
+in an unsure state while sending replies and waiting for a supplementary message to actually apply the side effect.
+Side effects not applied, expire after some time. This supplementary message is published by the same publisher of the
+original message after receiving all replies and only if the message journey is successful. For instance original
+message being: _FormSubmitted_ and supplementary message being: _FormSubmissionSucceed_.
 
 ## Implement using Messaging & Redis List
 This pattern lets us handle synchronous communication (frontend-backend) by variable number of
@@ -51,19 +74,8 @@ response ready and send it back to the **Client**.
 
 ## Join partial responses
 
-## Prevent waiting forever
-Check length of the shared array {TaskName}-{RequestID} a bit (500ms~1s) after task got dispatched. If it's greater than
-zero it means there are at least one worker which is working on the task and **task dispatcher** has to wait for it.
-If it's zero it means no one interested in the task and the **task dispatcher** has to return an empty response.
-
-## Nesting
-Not a big deal. Each **worker** can be a **task dispatcher** too for a 2nd task which is necessary to get done
-in order to finish the 1st task.
-
-## Compensation
-
 ## An example
 
 ## Alternative names
-* Mutual Trust: I trust you, You trust me.
+* Trust Chain/Mutual Trust: I trust you, You trust me.
 * Knowledge Mesh: Workflow knowledge is decentralized. It is distributed among all workers.
