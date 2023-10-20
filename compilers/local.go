@@ -1,4 +1,4 @@
-package main
+package compilers
 
 import (
 	"html/template"
@@ -7,14 +7,10 @@ import (
 	"time"
 )
 
-type Compiler interface {
-	Compile(tpl *template.Template, destination string, sources ...string) error
+type Local struct {
 }
 
-type LocalCompiler struct {
-}
-
-func (c LocalCompiler) Compile(tpl *template.Template, destination string, sources ...string) error {
+func (c Local) Compile(tpl *template.Template, destination string, sources ...string) error {
 	err := os.MkdirAll(destination, 0755)
 	if nil != err {
 		return err

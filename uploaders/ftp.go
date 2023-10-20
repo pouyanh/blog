@@ -1,8 +1,4 @@
-package main
-
-type Uploader interface {
-	Upload(destination, source string) error
-}
+package uploaders
 
 type FtpUploader struct {
 	Username string

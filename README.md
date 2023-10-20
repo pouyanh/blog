@@ -1,6 +1,6 @@
 # My Blog
 To generate publishable website:
 ```bash
-go generate -x -v ./...
+go run cmd/publish/*.go
 ```
 Pickup output from `public` dir
