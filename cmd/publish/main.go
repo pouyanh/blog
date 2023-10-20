@@ -1,74 +1,31 @@
 package main
 
 import (
+	"html/template"
 	"log"
-	"os"
-	"path"
-	"text/template"
-	"time"
-)
-
-//go:generate go run publish.go
-
-const (
-	dirnameOut    = "public"
-	basenameIndex = "index"
-	filenameDst   = basenameIndex + ".html"
-	filenameTpl   = filenameDst + ".tpl"
-)
-
-var (
-	tplIndex = template.Must(template.ParseFiles(filenameTpl))
+	"path/filepath"
 )
 
 func main() {
-	err := os.Mkdir(dirnameOut, 0755)
-	if nil != err {
-		log.Fatal(err)
+	cfg := Settings{
+		OutputDirectory: "public",
 	}
 
-	fh, err := os.Create(path.Join(dirnameOut, filenameDst))
-	if nil != err {
-		log.Fatal(err)
+	templates, err := filepath.Glob(filepath.Join("templates", "*.html.tpl"))
+	if err != nil {
+		log.Fatalf("reading templates error: %s", err)
 	}
-	defer func() { _ = fh.Close() }()
+	tpl := template.Must(template.ParseFiles(templates...))
+	log.Printf("template list loaded: %+v\n", templates)
 
-	err = tplIndex.Execute(fh, newArgs())
-	if nil != err {
-		log.Fatal(err)
+	lc := LocalCompiler{}
+	sources, err := filepath.Glob(filepath.Join("content", "articles", "*", "*.md"))
+	if err != nil {
+		log.Fatalf("reading contents error: %s", err)
 	}
-}
-
-type args struct {
-	Header header
-}
-
-func newArgs() args {
-	return args{
-		Header: newHeader(),
-	}
-}
-
-type header struct {
-	Date time.Time
-
-	OS   string
-	Arch string
-
-	PackageName string
-	Filename    string
-	LineNumber  string
-}
-
-func newHeader() header {
-	return header{
-		Date: time.Now(),
-
-		OS:   os.Getenv("GOOS"),
-		Arch: os.Getenv("GOARCH"),
-
-		PackageName: os.Getenv("GOPACKAGE"),
-		Filename:    os.Getenv("GOFILE"),
-		LineNumber:  os.Getenv("GOLINE"),
+	log.Printf("source list to process: %+v\n", sources)
+	err = lc.Compile(tpl, cfg.OutputDirectory, sources...)
+	if err != nil {
+		log.Fatalf("compile error: %s", err)
 	}
 }
