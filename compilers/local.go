@@ -8,6 +8,10 @@ import (
 )
 
 type Local struct {
+	RootFilename string
+	RootTemplate string
+
+	ArticleTemplate string
 }
 
 func (c Local) Compile(tpl *template.Template, destination string, sources ...string) error {
@@ -16,13 +20,13 @@ func (c Local) Compile(tpl *template.Template, destination string, sources ...st
 		return err
 	}
 
-	fh, err := os.Create(filepath.Join(destination, "index.html"))
+	fh, err := os.Create(filepath.Join(destination, c.RootFilename))
 	if nil != err {
 		return err
 	}
 	defer func() { _ = fh.Close() }()
 
-	err = tpl.ExecuteTemplate(fh, "root.html.tpl", newArgs())
+	err = tpl.ExecuteTemplate(fh, c.RootTemplate, newArgs())
 	if nil != err {
 		return err
 	}

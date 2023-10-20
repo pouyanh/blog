@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	cfg := blog.Settings{
+	stn := blog.Settings{
 		OutputDirectory: "public",
 	}
 
@@ -26,8 +26,13 @@ func main() {
 		log.Fatalf("reading contents error: %s", err)
 	}
 	log.Printf("source list to process: %+v\n", sources)
-	lc := compilers.Local{}
-	err = lc.Compile(tpl, cfg.OutputDirectory, sources...)
+	lc := compilers.Local{
+		RootFilename: "index.html",
+		RootTemplate: "root.html.tpl",
+
+		ArticleTemplate: "article.html.tpl",
+	}
+	err = lc.Compile(tpl, stn.OutputDirectory, sources...)
 	if err != nil {
 		log.Fatalf("compile error: %s", err)
 	}
