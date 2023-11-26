@@ -14,7 +14,7 @@ func main() {
 		OutputDirectory: "public",
 	}
 
-	templates, err := filepath.Glob(filepath.Join("templates", "*.html.tpl"))
+	templates, err := filepath.Glob(filepath.Join("templates", "*.gohtml"))
 	if err != nil {
 		log.Fatalf("reading templates error: %s", err)
 	}
@@ -26,12 +26,7 @@ func main() {
 		log.Fatalf("reading contents error: %s", err)
 	}
 	log.Printf("source list to process: %+v\n", sources)
-	lc := compilers.Local{
-		RootFilename: "index.html",
-		RootTemplate: "root.html.tpl",
-
-		ArticleTemplate: "article.html.tpl",
-	}
+	lc := compilers.LocalCompiler()
 	err = lc.Compile(tpl, stn.OutputDirectory, sources...)
 	if err != nil {
 		log.Fatalf("compile error: %s", err)

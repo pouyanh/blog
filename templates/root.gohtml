@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>Pouyan Heyratpour Blog</title>
+  </head>
+  <body>
+	  <section>
+			<p><strong>Published on</strong>: {{ .Header.Date.Format "2006 Jan 02" }}</p>
+		</section>
+	  <section>
+			<h3>Articles</h3>
+			<dl id="langsw"></dl>
+			<dl id="toc">
+          {{ range .Articles }}
+						<dt><a href="{{ .Link }}">{{ .Title }} [{{ .Lang }}]</a></dt>
+          {{ end }}
+			</dl>
+		</section>
+
+	<script type="application/javascript">
+		let articles = [
+			{{ range .Articles }}
+			{
+				"title": "{{ .Title }}",
+				"lang":  "{{ .Lang }}",
+				"link":  "{{ .Link }}",
+			}
+			{{ end }}
+		];
+
+		document.getElementById("toc");
+	</script>
+  </body>
+</html>
