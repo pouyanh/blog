@@ -1,3 +1,4 @@
+{{ $root := . }}
 <html>
   <head>
     <title>Pouyan Heyratpour Blog</title>
@@ -8,24 +9,41 @@
 		</section>
 	  <section>
 			<h3>Articles</h3>
-			<dl id="langsw"></dl>
 			<dl id="toc">
-          {{ range .Articles }}
-						<dt><a href="{{ .Link }}">{{ .Title }} [{{ .Lang }}]</a></dt>
-          {{ end }}
+				{{- range $lang, $Lang := .Languages }}
+					<dl>
+						<dt><strong>{{ $Lang.Title }}</strong>
+						{{- range $root.Articles }}
+							{{- if eq .Lang $lang }}
+								<dt><a href="{{ .Link }}">{{ .Title }}</a></dt>
+							{{- end }}
+						{{- end }}
+						</dt>
+					</dl>
+				{{- end }}
 			</dl>
 		</section>
 
 	<script type="application/javascript">
 		let articles = [
-			{{ range .Articles }}
-			{
-				"title": "{{ .Title }}",
-				"lang":  "{{ .Lang }}",
-				"link":  "{{ .Link }}",
+			{{- range $i, $a := .Articles -}}
+			{{ if $i }}, {{ end }}{
+				"title": {{ $a.Title }},
+				"lang":  {{ $a.Lang }},
+				"link":  {{ $a.Link }}
 			}
-			{{ end }}
+			{{- end -}}
 		];
+
+		let languages = {
+			{{- range $lang, $Lang := .Languages -}}
+				"{{ $lang }}": {
+					"upperCode": {{ $Lang.UpperCode }},
+					"title":     {{ $Lang.Title }},
+					"rtl":       {{ $Lang.Rtl }}
+				},
+			{{- end -}}
+		};
 
 		document.getElementById("toc");
 	</script>

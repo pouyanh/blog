@@ -1,5 +1,3 @@
-asdas
-
 # Anocast
 This is a Communication pattern in which nodes aren't aware of each-other when communicating. They broadcast messages,
 other node(s) receive it and in case of interest they declare themselves as being in-charge immediately.

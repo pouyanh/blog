@@ -155,15 +155,27 @@ func getTitle(doc *blackfriday.Node, fallback string) string {
 }
 
 type args struct {
-	Header   header
-	Articles []article
+	Header    header
+	Defaults  defaults
+	Languages map[string]lang
+	Articles  []article
 }
 
 func newArgs(articles ...article) args {
-	return args{
-		Header:   newHeader(),
-		Articles: articles,
+	scope := args{
+		Header: newHeader(),
+		Defaults: defaults{
+			Lang: "en",
+		},
+		Languages: make(map[string]lang),
+		Articles:  articles,
 	}
+
+	for _, a := range articles {
+		scope.Languages[a.Lang] = langs[a.Lang]
+	}
+
+	return scope
 }
 
 type header struct {
@@ -188,6 +200,29 @@ func newHeader() header {
 		Filename:    os.Getenv("GOFILE"),
 		LineNumber:  os.Getenv("GOLINE"),
 	}
+}
+
+type defaults struct {
+	Lang string
+}
+
+type lang struct {
+	UpperCode string // Contains ISO 639-1 two-letter code in uppercase
+	Title     string
+	Rtl       bool
+}
+
+var langs = map[string]lang{
+	"en": {
+		UpperCode: "EN",
+		Title:     "English",
+		Rtl:       false,
+	},
+	"fa": {
+		UpperCode: "FA",
+		Title:     "فارسی",
+		Rtl:       true,
+	},
 }
 
 type article struct {
