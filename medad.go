@@ -11,5 +11,11 @@ type Uploader interface {
 }
 
 type Settings struct {
-	OutputDirectory string
+	ArticlesGlob  string
+	TemplatesGlob string
+	DistDirectory string
+
+	FtpUsername     string
+	FtpPassword     string
+	RemoteDirectory string
 }
