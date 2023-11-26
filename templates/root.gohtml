@@ -2,27 +2,34 @@
 <html>
   <head>
     <title>Pouyan Heyratpour Blog</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+					integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+					integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
   </head>
   <body>
-	  <section>
-			<p><strong>Published on</strong>: {{ .Header.Date.Format "2006 Jan 02" }}</p>
-		</section>
-	  <section>
-			<h3>Articles</h3>
-			<dl id="toc">
-				{{- range $lang, $Lang := .Languages }}
-					<dl>
-						<dt><strong>{{ $Lang.Title }}</strong>
-						{{- range $root.Articles }}
-							{{- if eq .Lang $lang }}
-								<dt><a href="{{ .Link }}">{{ .Title }}</a></dt>
-							{{- end }}
-						{{- end }}
-						</dt>
-					</dl>
-				{{- end }}
-			</dl>
-		</section>
+	  <article class="container">
+			<section>
+				<p><strong>Published on</strong>: {{ .Header.Date.Format "2006 Jan 02" }}</p>
+			</section>
+			<section>
+				<h3>Articles</h3>
+				<section id="toc">
+					{{- range $lang, $Lang := .Languages }}
+						<section class="col-sm-6">
+							<h4>{{ $Lang.Title }}</h4>
+							<dl>
+								{{- range $root.Articles }}
+									{{- if eq .Lang $lang }}
+										<dt><a href="{{ .Link }}">{{ .Title }}</a></dt>
+									{{- end }}
+								{{- end }}
+							</dl>
+						</section>
+					{{- end }}
+				</section>
+			</section>
+		</article>
 
 	<script type="application/javascript">
 		let articles = [
