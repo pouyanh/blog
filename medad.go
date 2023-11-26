@@ -15,6 +15,8 @@ type Settings struct {
 	TemplatesGlob string
 	DistDirectory string
 
+	FtpHost         string
+	FtpPort         string
 	FtpUsername     string
 	FtpPassword     string
 	RemoteDirectory string

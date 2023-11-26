@@ -6,11 +6,13 @@ import (
 	"html/template"
 	"log"
 	"path/filepath"
+	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/pouyanh/blog"
 	"github.com/pouyanh/blog/compilers"
+	"github.com/pouyanh/blog/uploaders"
 )
 
 func main() {
@@ -46,6 +48,10 @@ func (c *medad) run(ctx context.Context) error {
 		Short: "Uploads compiled html files to server",
 		RunE:  c.upload,
 	}
+	upload.Flags().StringVarP(&c.stn.FtpHost, "host", "H", "example.com",
+		"FTP Host to upload")
+	upload.Flags().StringVarP(&c.stn.FtpPort, "port", "P", "21",
+		"FTP Port to upload")
 	upload.Flags().StringVarP(&c.stn.FtpUsername, "username", "u", "anonymous",
 		"FTP Username to upload")
 	upload.Flags().StringVarP(&c.stn.FtpPassword, "password", "p", "",
@@ -91,6 +97,20 @@ func (c *medad) compile(cmd *cobra.Command, args []string) error {
 }
 
 func (c *medad) upload(cmd *cobra.Command, args []string) error {
+	fu := uploaders.FtpUploader{
+		Username: c.stn.FtpUsername,
+		Password: c.stn.FtpPassword,
+		Host:     c.stn.FtpHost,
+		Port:     c.stn.FtpPort,
+
+		Timeout: 5 * time.Second,
+	}
+
+	err := fu.Upload(c.stn.RemoteDirectory, c.stn.DistDirectory)
+	if err != nil {
+		return fmt.Errorf("upload error: %w", err)
+	}
+
 	return nil
 }
 
