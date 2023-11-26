@@ -157,7 +157,7 @@ func getTitle(doc *blackfriday.Node, fallback string) string {
 type args struct {
 	Header    header
 	Defaults  defaults
-	Languages map[string]lang
+	Languages map[string]language
 	Articles  []article
 }
 
@@ -167,12 +167,12 @@ func newArgs(articles ...article) args {
 		Defaults: defaults{
 			Lang: "en",
 		},
-		Languages: make(map[string]lang),
+		Languages: make(map[string]language),
 		Articles:  articles,
 	}
 
 	for _, a := range articles {
-		scope.Languages[a.Lang] = langs[a.Lang]
+		scope.Languages[a.Lang] = languages[a.Lang]
 	}
 
 	return scope
@@ -206,13 +206,13 @@ type defaults struct {
 	Lang string
 }
 
-type lang struct {
+type language struct {
 	UpperCode string // Contains ISO 639-1 two-letter code in uppercase
 	Title     string
 	Rtl       bool
 }
 
-var langs = map[string]lang{
+var languages = map[string]language{
 	"en": {
 		UpperCode: "EN",
 		Title:     "English",
