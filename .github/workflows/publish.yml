@@ -3,7 +3,10 @@ run-name: Publish ${{github.ref}}
 
 on: workflow_dispatch
 
-env:
-
 jobs:
+  compile:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
